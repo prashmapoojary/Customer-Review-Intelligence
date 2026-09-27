@@ -1,5 +1,10 @@
 # NLP-Powered Customer Review Analytics & Early-Warning Intelligence System
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9065c3a/deploy-status)](https://guileless-dieffenbachia-5847b8.netlify.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Netlify%20Dashboard-3ECF9E?style=for-the-badge&logo=netlify)](https://guileless-dieffenbachia-5847b8.netlify.app/)
+
+> **Live Dashboard Demo**: [https://guileless-dieffenbachia-5847b8.netlify.app/](https://guileless-dieffenbachia-5847b8.netlify.app/)
+
 An end-to-end NLP data analytics system that processes customer reviews at scale, detects emerging product quality defects using sentiment analysis and dual-model NMF topic extraction, calculates composite early-warning risk scores, and visualizes actionable findings through an interactive Command Center HTML dashboard and Tableau-ready data exports.
 
 ---
