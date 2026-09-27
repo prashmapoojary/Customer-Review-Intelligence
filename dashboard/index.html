@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Review Intelligence | NLP Analytics Dashboard</title>
+<meta name="description" content="Executive NLP customer review analytics dashboard featuring sentiment analysis, NMF topic modeling, and early warning risk scoring.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+--bg-dark:#0D1117;
+--card-bg:#161B22;
+--card-border:#30363D;
+--text-main:#F0F6FC;
+--text-muted:#8B949E;
+--teal-accent:#3ECF9E;
+--red-critical:#E5484D;
+--amber-high:#F0913A;
+--yellow-watch:#F0C531;
+--gray-healthy:#3ECF9E;
+--blue-accent:#58A6FF;
+}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+body{
+background-color:var(--bg-dark);
+color:var(--text-main);
+padding:24px;
+min-height:100vh;
+}
+.container{
+max-width:1400px;
+margin:0 auto;
+}
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding-bottom:20px;
+border-bottom:1px solid var(--card-border);
+margin-bottom:24px;
+flex-wrap:wrap;
+gap:12px;
+}
+.header-title h1{
+font-size:24px;
+font-weight:700;
+letter-spacing:-0.5px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+.badge-nlp{
+background:rgba(62, 207, 158, 0.15);
+color:var(--teal-accent);
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+border:1px solid rgba(62, 207, 158, 0.3);
+text-transform:uppercase;
+font-weight:600;
+}
+.header-subtitle{
+color:var(--text-muted);
+font-size:13px;
+margin-top:4px;
+}
+.nav-tabs{
+display:flex;
+gap:8px;
+margin-bottom:24px;
+border-bottom:1px solid var(--card-border);
+padding-bottom:8px;
+overflow-x:auto;
+}
+.nav-btn{
+background:transparent;
+border:1px solid transparent;
+color:var(--text-muted);
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+font-size:14px;
+font-weight:600;
+transition:all 0.2s ease;
+display:flex;
+align-items:center;
+gap:8px;
+white-space:nowrap;
+}
+.nav-btn:hover{
+color:var(--text-main);
+background:rgba(255, 255, 255, 0.05);
+}
+.nav-btn.active{
+color:#FFFFFF;
+background:#21262D;
+border-color:var(--card-border);
+box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.kpi-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+gap:16px;
+margin-bottom:24px;
+}
+.kpi-card{
+background:var(--card-bg);
+border:1px solid var(--card-border);
+border-radius:10px;
+padding:16px;
+display:flex;
+flex-direction:column;
+}
+.kpi-label{
+color:var(--text-muted);
+font-size:12px;
+font-weight:600;
+text-transform:uppercase;
+letter-spacing:0.5px;
+margin-bottom:8px;
+}
+.kpi-value{
+font-size:26px;
+font-weight:700;
+color:var(--text-main);
+}
+.kpi-sub{
+font-size:12px;
+margin-top:6px;
+}
+.text-teal{ color:var(--teal-accent);}
+.text-red{ color:var(--red-critical);}
+.text-amber{ color:var(--amber-high);}
+.text-yellow{ color:var(--yellow-watch);}
+.text-blue{ color:var(--blue-accent);}
+.grid-2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:24px;
+}
+@media (max-width:900px){
+.grid-2{ grid-template-columns:1fr;}
+}
+.card{
+background:var(--card-bg);
+border:1px solid var(--card-border);
+border-radius:10px;
+padding:20px;
+position:relative;
+}
+.card-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:16px;
+}
+.card-title{
+font-size:15px;
+font-weight:600;
+color:var(--text-main);
+}
+.chart-box{
+position:relative;
+height:320px;
+width:100%;
+}
+.tab-pane{
+display:none;
+}
+.tab-pane.active{
+display:block;
+}
+/* Watchlist Table */
+.table-container{
+overflow-x:auto;
+border-radius:8px;
+border:1px solid var(--card-border);
+}
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+text-align:left;
+}
+th{
+background:#21262D;
+color:var(--text-muted);
+padding:12px 16px;
+font-weight:600;
+border-bottom:1px solid var(--card-border);
+cursor:pointer;
+user-select:none;
+}
+th:hover{
+color:var(--text-main);
+}
+td{
+padding:12px 16px;
+border-bottom:1px solid rgba(48, 54, 61, 0.5);
+color:var(--text-main);
+}
+tr:hover td{
+background:rgba(255, 255, 255, 0.02);
+}
+.pill{
+display:inline-block;
+padding:3px 10px;
+border-radius:12px;
+font-size:11px;
+font-weight:700;
+text-transform:uppercase;
+letter-spacing:0.3px;
+}
+.pill-critical{ background:rgba(229, 72, 77, 0.2);color:#FF6B6B;border:1px solid rgba(229, 72, 77, 0.4);}
+.pill-high{ background:rgba(240, 145, 58, 0.2);color:#FFAA5A;border:1px solid rgba(240, 145, 58, 0.4);}
+.pill-watch{ background:rgba(240, 197, 49, 0.2);color:#FFDD53;border:1px solid rgba(240, 197, 49, 0.4);}
+.pill-healthy{ background:rgba(62, 207, 158, 0.2);color:#3ECF9E;border:1px solid rgba(62, 207, 158, 0.4);}
+.pill-insufficient{ background:rgba(110, 118, 129, 0.2);color:#8B949E;border:1px solid rgba(110, 118, 129, 0.4);}
+.select-dropdown{
+background:#21262D;
+border:1px solid var(--card-border);
+color:var(--text-main);
+padding:10px 14px;
+border-radius:8px;
+font-size:14px;
+width:100%;
+max-width:450px;
+margin-bottom:20px;
+outline:none;
+}
+.select-dropdown:focus{
+border-color:var(--teal-accent);
+}
+.note-box{
+background:rgba(88, 166, 255, 0.08);
+border:1px solid rgba(88, 166, 255, 0.25);
+border-radius:8px;
+padding:14px 18px;
+font-size:13px;
+color:#C9D1D9;
+line-height:1.5;
+margin-top:20px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<div class="header-title">
+<h1>Amazon Review Intelligence Center <span class="badge-nlp">VADER + NMF Engine</span></h1>
+<div class="header-subtitle">NLP Sentiment Analysis, Dual-Model Topic Extraction & Predictive Risk Scoring</div>
+</div>
+<div style="font-size:13px;color:var(--text-muted);">
+Dataset:<strong>6,655 Reviews</strong> | <strong>35 Products</strong> (14-Month Rolling)
+</div>
+</header>
+<!-- Navigation Tabs -->
+<nav class="nav-tabs">
+<button class="nav-btn active" onclick="switchTab('overview')"> Executive Overview</button>
+<button class="nav-btn" onclick="switchTab('themes')"> Complaint & Praise Themes</button>
+<button class="nav-btn" onclick="switchTab('watchlist')"> At-Risk Watchlist</button>
+<button class="nav-btn" onclick="switchTab('drilldown')"> Product Drill-Down</button>
+</nav>
+<!-- TAB 1:EXECUTIVE OVERVIEW -->
+<div id="tab-overview" class="tab-pane active">
+<div class="kpi-grid">
+<div class="kpi-card">
+<div class="kpi-label">Total Reviews</div>
+<div class="kpi-value" id="kpi-total-reviews">-</div>
+<div class="kpi-sub text-blue">Across 6 Categories</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Positive Sentiment</div>
+<div class="kpi-value text-teal" id="kpi-pos-pct">-</div>
+<div class="kpi-sub" style="color:var(--text-muted)">VADER Compound &ge;0.05</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Negative Sentiment</div>
+<div class="kpi-value text-red" id="kpi-neg-pct">-</div>
+<div class="kpi-sub" style="color:var(--text-muted)">VADER Compound &le;-0.05</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Avg Star Rating</div>
+<div class="kpi-value text-yellow" id="kpi-avg-rating">-</div>
+<div class="kpi-sub" style="color:var(--text-muted)">1.0 to 5.0 scale</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Critical / High Risk</div>
+<div class="kpi-value text-red" id="kpi-critical-high">-</div>
+<div class="kpi-sub text-red">Action Required Immediately</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Watch Tier</div>
+<div class="kpi-value text-yellow" id="kpi-watch">-</div>
+<div class="kpi-sub text-yellow">Monitoring Trend Delta</div>
+</div>
+</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-header">
+<div class="card-title">14-Month Sentiment Trend Ratio (%)</div>
+</div>
+<div class="chart-box">
+<canvas id="chart-sentiment-trend"></canvas>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title">Category Sentiment Distribution</div>
+</div>
+<div class="chart-box">
+<canvas id="chart-category-sentiment"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB 2:COMPLAINT & PRAISE THEMES -->
+<div id="tab-themes" class="tab-pane">
+<div class="grid-2">
+<div class="card">
+<div class="card-header">
+<div class="card-title text-red"> Top Customer Complaint Themes (NMF Negative Model)</div>
+</div>
+<div class="chart-box" style="height:380px;">
+<canvas id="chart-complaint-themes"></canvas>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title text-teal"> Top Customer Praise Themes (NMF Positive Model)</div>
+</div>
+<div class="chart-box" style="height:380px;">
+<canvas id="chart-praise-themes"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB 3:AT-RISK WATCHLIST -->
+<div id="tab-watchlist" class="tab-pane">
+<div class="card">
+<div class="card-header">
+<div>
+<div class="card-title">Early-Warning Product Risk Watchlist</div>
+<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+Combines 90-Day Deterioration Trend (55%), Complaint Severity Weights (45%), and Volume Confidence.
+</div>
+</div>
+</div>
+<div class="table-container">
+<table id="watchlist-table">
+<thead>
+<tr>
+<th onclick="sortTable(0)">Product Name</th>
+<th onclick="sortTable(1)">Category</th>
+<th onclick="sortTable(2)">Risk Score</th>
+<th onclick="sortTable(3)">Risk Tier</th>
+<th onclick="sortTable(4)">Lifetime Rating</th>
+<th onclick="sortTable(5)">Recent 90d Rating</th>
+<th onclick="sortTable(6)">Recent Neg %</th>
+<th onclick="sortTable(7)">Top Complaint Theme</th>
+</tr>
+</thead>
+<tbody id="watchlist-tbody">
+<!-- Rendered dynamically -->
+</tbody>
+</table>
+</div>
+<div class="note-box">
+<strong> Tradeoff Note on Early-Warning Detection Systems:</strong> Early-warning risk models are intentionally biased toward higher sensitivity over specificity. False positives (temporary shipping delays or isolated bad batches) are an accepted operational tradeoff to ensure emerging structural defects or manufacturing quality slips are caught before irreversible brand erosion occurs.
+</div>
+</div>
+</div>
+<!-- TAB 4:PRODUCT DRILL-DOWN -->
+<div id="tab-drilldown" class="tab-pane">
+<div class="card">
+<div class="card-header">
+<div class="card-title">Select Product to Inspect</div>
+</div>
+<select id="product-select" class="select-dropdown" onchange="renderProductDrilldown()">
+<!-- Options populated by JS -->
+</select>
+<div class="kpi-grid" style="grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));margin-bottom:20px;">
+<div class="kpi-card">
+<div class="kpi-label">Risk Status</div>
+<div class="kpi-value" id="pdrill-tier">-</div>
+<div class="kpi-sub" id="pdrill-score">-</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Recent 90d Rating</div>
+<div class="kpi-value" id="pdrill-recent-rating">-</div>
+<div class="kpi-sub" id="pdrill-lifetime-rating">-</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Recent Negativity</div>
+<div class="kpi-value" id="pdrill-recent-neg">-</div>
+<div class="kpi-sub" id="pdrill-reviews-count">-</div>
+</div>
+<div class="kpi-card">
+<div class="kpi-label">Primary Complaint</div>
+<div class="kpi-value" style="font-size:16px;margin-top:4px;" id="pdrill-top-complaint">-</div>
+</div>
+</div>
+<div class="grid-2">
+<div class="card" style="background:#11161D;">
+<div class="card-header">
+<div class="card-title">Monthly Average Rating & Negative Review Count</div>
+</div>
+<div class="chart-box">
+<canvas id="chart-product-trend"></canvas>
+</div>
+</div>
+<div class="card" style="background:#11161D;">
+<div class="card-header">
+<div class="card-title">Product Complaint Theme Breakdown</div>
+</div>
+<div class="chart-box">
+<canvas id="chart-product-themes"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+// Embedded compact aggregated JSON dataset
+const DATA ={"kpis":{"total_reviews":6655,"total_products":35,"avg_rating":3.36,"pos_pct":68.0,"neg_pct":31.8,"neu_pct":0.3,"critical_count":0,"high_count":11,"watch_count":6,"healthy_count":18},"timeline":{"months":["2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08"],"pos":[77.9,73.5,78.7,78.1,76.1,66.2,72.9,68.4,70.9,68.4,66.9,64.8,61.7,64.1,56.7],"neg":[22.1,26.1,21.3,21.9,23.9,33.8,26.9,31.1,29.1,31.2,33.1,34.7,37.9,35.1,43.0],"neu":[0.0,0.4,0.0,0.0,0.0,0.0,0.2,0.4,0.0,0.4,0.0,0.5,0.3,0.7,0.3]},"categories":{"names":["Baby & Kids","Electronics","Health & Personal Care","Home & Office","Kitchen","Pet Supplies"],"pos":[866,728,739,732,789,671],"neg":[242,508,386,367,379,231],"neu":[3,1,5,4,0,4]},"themes":{"comp":{"Durability / Build Quality":454,"Shipping / Packaging Damage":342,"Confusing Manual / Setup Difficulty":277,"Overpriced / Poor Value":274,"Sizing & Dimension Inaccuracy":271,"Defective / Hardware Failure":248,"Customer Service & Refund Issues":247},"praise":{"Superior Build & Durability":848,"Great Value & Affordability":769,"Sleek & Modern Design":560,"Outstanding Customer Support":550,"Fast Shipping & Secure Packaging":547,"Ease of Use & Simple Setup":546,"Expected / Works Expected / Works":374,"Item / Acceptable / Needs Fair":331}},"watchlist":[{"id":"ELEC-005","name":"UltraFit GPS Heart Rate Smartwatch","cat":"Electronics","score":57.8,"tier":"High","tot_r":2.7,"rec_r":1.6,"rec_neg":0.88,"top_comp":"Shipping / Packaging Damage"},{"id":"HLTH-002","name":"DeepTissue Portable Percussion Massage Gun","cat":"Health & Personal Care","score":54.3,"tier":"High","tot_r":2.7,"rec_r":1.6,"rec_neg":0.87,"top_comp":"Shipping / Packaging Damage"},{"id":"HLTH-005","name":"PostureCorrect Adjustable Spine Support Brace","cat":"Health & Personal Care","score":53.6,"tier":"High","tot_r":1.8,"rec_r":1.5,"rec_neg":0.87,"top_comp":"Overpriced / Poor Value"},{"id":"ELEC-003","name":"AuraGlow RGB Mechanical Gaming Keyboard","cat":"Electronics","score":53.1,"tier":"High","tot_r":2.6,"rec_r":1.6,"rec_neg":0.83,"top_comp":"Defective / Hardware Failure"},{"id":"HOME-006","name":"CableHide Heavy Duty Cable Management Raceway","cat":"Home & Office","score":50.2,"tier":"High","tot_r":1.7,"rec_r":1.6,"rec_neg":0.82,"top_comp":"Shipping / Packaging Damage"},{"id":"KITCH-005","name":"NonStick Diamond Ceramic Frying Pan 12-inch","cat":"Kitchen","score":50.1,"tier":"High","tot_r":2.6,"rec_r":1.9,"rec_neg":0.8,"top_comp":"Durability / Build Quality"},{"id":"ELEC-006","name":"PocketBass Portable Mini Bluetooth Speaker","cat":"Electronics","score":49.5,"tier":"High","tot_r":1.8,"rec_r":1.8,"rec_neg":0.81,"top_comp":"Durability / Build Quality"},{"id":"PETS-001","name":"FreshFlow Stainless Steel Pet Water Fountain","cat":"Pet Supplies","score":49.1,"tier":"High","tot_r":2.6,"rec_r":1.8,"rec_neg":0.74,"top_comp":"Durability / Build Quality"},{"id":"BABY-001","name":"SafeSleep Video Baby Monitor with Night Vision","cat":"Baby & Kids","score":47.7,"tier":"High","tot_r":2.7,"rec_r":1.8,"rec_neg":0.8,"top_comp":"Sizing & Dimension Inaccuracy"},{"id":"KITCH-003","name":"TitaniumBlade 15-Piece German Knife Set","cat":"Kitchen","score":45.1,"tier":"High","tot_r":2.6,"rec_r":2.0,"rec_neg":0.75,"top_comp":"Durability / Build Quality"},{"id":"HOME-001","name":"ErgoRest Ergonomic Mesh Executive Office Chair","cat":"Home & Office","score":42.6,"tier":"High","tot_r":2.6,"rec_r":2.0,"rec_neg":0.72,"top_comp":"Shipping / Packaging Damage"},{"id":"BABY-005","name":"StrollEasy Lightweight Compact Travel Stroller","cat":"Baby & Kids","score":34.6,"tier":"Watch","tot_r":2.9,"rec_r":2.6,"rec_neg":0.51,"top_comp":"Durability / Build Quality"},{"id":"KITCH-004","name":"NutriBlend High-Speed Countertop Blender","cat":"Kitchen","score":33.5,"tier":"Watch","tot_r":2.8,"rec_r":2.6,"rec_neg":0.53,"top_comp":"Customer Service & Refund Issues"},{"id":"HLTH-003","name":"AquaPulse Cordless Rechargeable Water Flosser","cat":"Health & Personal Care","score":31.8,"tier":"Watch","tot_r":2.9,"rec_r":2.8,"rec_neg":0.49,"top_comp":"Shipping / Packaging Damage"},{"id":"PETS-003","name":"AutoLaser Interactive Cat Toy Rotating Beam","cat":"Pet Supplies","score":24.9,"tier":"Watch","tot_r":2.9,"rec_r":2.9,"rec_neg":0.4,"top_comp":"Overpriced / Poor Value"},{"id":"HOME-004","name":"AromaMist Ultrasonic Essential Oil Diffuser","cat":"Home & Office","score":24.0,"tier":"Watch","tot_r":3.0,"rec_r":2.9,"rec_neg":0.44,"top_comp":"Confusing Manual / Setup Difficulty"},{"id":"ELEC-004","name":"StreamVision 4K Ultra HD Webcam","cat":"Electronics","score":19.8,"tier":"Watch","tot_r":2.9,"rec_r":2.8,"rec_neg":0.33,"top_comp":"Overpriced / Poor Value"},{"id":"KITCH-002","name":"BaristaTouch Automatic Espresso Machine","cat":"Kitchen","score":11.5,"tier":"Healthy","tot_r":3.9,"rec_r":3.9,"rec_neg":0.18,"top_comp":"Shipping / Packaging Damage"},{"id":"KITCH-006","name":"ThermoPrecision Instant Read Meat Thermometer","cat":"Kitchen","score":8.1,"tier":"Healthy","tot_r":4.0,"rec_r":3.9,"rec_neg":0.12,"top_comp":"Sizing & Dimension Inaccuracy"},{"id":"BABY-004","name":"WhiteNoise Dream Machine Sound Soother","cat":"Baby & Kids","score":7.7,"tier":"Healthy","tot_r":3.9,"rec_r":3.7,"rec_neg":0.14,"top_comp":"Shipping / Packaging Damage"},{"id":"PETS-005","name":"NoPull Reflective Heavy Duty Dog Harness","cat":"Pet Supplies","score":7.7,"tier":"Healthy","tot_r":3.9,"rec_r":4.0,"rec_neg":0.12,"top_comp":"Customer Service & Refund Issues"},{"id":"BABY-002","name":"SiliconeSuction Toddler Feeding Plate & Bib Set","cat":"Baby & Kids","score":7.3,"tier":"Healthy","tot_r":4.4,"rec_r":4.4,"rec_neg":0.1,"top_comp":"Customer Service & Refund Issues"},{"id":"PETS-004","name":"GroomPro Self-Cleaning Pet Slicker Deshedding Brush","cat":"Pet Supplies","score":5.9,"tier":"Healthy","tot_r":3.9,"rec_r":3.9,"rec_neg":0.1,"top_comp":"Shipping / Packaging Damage"},{"id":"HOME-002","name":"LuminaGlow Smart LED Dimmable Desk Lamp","cat":"Home & Office","score":5.7,"tier":"Healthy","tot_r":4.4,"rec_r":4.3,"rec_neg":0.1,"top_comp":"Customer Service & Refund Issues"},{"id":"BABY-006","name":"TeethRelief Organic Silicone Baby Teething Toys","cat":"Baby & Kids","score":5.1,"tier":"Healthy","tot_r":4.1,"rec_r":4.0,"rec_neg":0.09,"top_comp":"Customer Service & Refund Issues"},{"id":"PETS-002","name":"OrthopedicFoam Plush Waterproof Dog Bed Large","cat":"Pet Supplies","score":4.8,"tier":"Healthy","tot_r":4.4,"rec_r":4.4,"rec_neg":0.07,"top_comp":"Shipping / Packaging Damage"},{"id":"BABY-003","name":"SnuggleWarm Infant Muslin Swaddle Blankets 4-Pack","cat":"Baby & Kids","score":4.2,"tier":"Healthy","tot_r":4.3,"rec_r":4.2,"rec_neg":0.07,"top_comp":"Sizing & Dimension Inaccuracy"},{"id":"KITCH-001","name":"ChefMaster 8-in-1 Digital Air Fryer XL","cat":"Kitchen","score":3.2,"tier":"Healthy","tot_r":4.3,"rec_r":4.5,"rec_neg":0.05,"top_comp":"Defective / Hardware Failure"},{"id":"HOME-003","name":"PureBreathe True HEPA Air Purifier for Home","cat":"Home & Office","score":3.1,"tier":"Healthy","tot_r":4.0,"rec_r":4.0,"rec_neg":0.06,"top_comp":"Shipping / Packaging Damage"},{"id":"HLTH-004","name":"BioGlow Organic Hyaluronic Acid Face Serum","cat":"Health & Personal Care","score":3.0,"tier":"Healthy","tot_r":4.0,"rec_r":4.2,"rec_neg":0.06,"top_comp":"Shipping / Packaging Damage"},{"id":"HOME-005","name":"MemoryCloud Orthopedic Seat Cushion","cat":"Home & Office","score":2.9,"tier":"Healthy","tot_r":3.9,"rec_r":4.2,"rec_neg":0.06,"top_comp":"Sizing & Dimension Inaccuracy"},{"id":"HLTH-001","name":"SonicClean Pro Electric Sonic Toothbrush","cat":"Health & Personal Care","score":2.7,"tier":"Healthy","tot_r":4.3,"rec_r":4.3,"rec_neg":0.04,"top_comp":"Durability / Build Quality"},{"id":"HLTH-006","name":"SleepEase 3D Contoured Blackout Eye Mask","cat":"Health & Personal Care","score":2.1,"tier":"Healthy","tot_r":4.4,"rec_r":4.5,"rec_neg":0.04,"top_comp":"Shipping / Packaging Damage"},{"id":"ELEC-002","name":"HyperCharge 65W GaN Fast Wall Charger","cat":"Electronics","score":1.7,"tier":"Healthy","tot_r":4.1,"rec_r":4.3,"rec_neg":0.02,"top_comp":"Durability / Build Quality"},{"id":"ELEC-001","name":"SoundPulse Pro Wireless ANC Headphones","cat":"Electronics","score":0.8,"tier":"Healthy","tot_r":4.3,"rec_r":4.6,"rec_neg":0.02,"top_comp":"Confusing Manual / Setup Difficulty"}],"drilldown":{"KITCH-001":{"name":"ChefMaster 8-in-1 Digital Air Fryer XL","cat":"Kitchen","tier":"Healthy","score":3.2,"rec_r":4.45,"tot_r":4.35,"rec_neg":0.05,"top_comp":"Defective / Hardware Failure","n_tot":188,"n_rec":56,"m_r":[4.4,4.0,4.8,4.2,3.5,4.7,4.0,3.9,4.2,4.6,4.4,4.2,4.6,4.1,4.5],"m_neg":[0,0,0,2,0,0,1,3,2,1,1,2,0,2,1],"themes":{"Defective / Hardware Failure":4,"Overpriced / Poor Value":4,"Durability / Build Quality":2,"Confusing Manual / Setup Difficulty":2,"Customer Service & Refund Issues":2,"Shipping / Packaging Damage":1}},"KITCH-002":{"name":"BaristaTouch Automatic Espresso Machine","cat":"Kitchen","tier":"Healthy","score":11.5,"rec_r":3.94,"tot_r":3.91,"rec_neg":0.18,"top_comp":"Shipping / Packaging Damage","n_tot":215,"n_rec":54,"m_r":[4.3,3.5,4.0,4.1,4.4,3.2,4.2,4.0,3.4,3.7,4.0,3.8,4.1,4.3,3.3],"m_neg":[0,0,1,0,1,6,1,1,4,3,2,4,3,1,6],"themes":{"Confusing Manual / Setup Difficulty":9,"Durability / Build Quality":8,"Shipping / Packaging Damage":5,"Overpriced / Poor Value":4,"Customer Service & Refund Issues":3,"Sizing & Dimension Inaccuracy":2,"Defective / Hardware Failure":2}},"BABY-005":{"name":"StrollEasy Lightweight Compact Travel Stroller","cat":"Baby & Kids","tier":"Watch","score":34.6,"rec_r":2.57,"tot_r":2.92,"rec_neg":0.51,"top_comp":"Durability / Build Quality","n_tot":209,"n_rec":49,"m_r":[3.0,3.0,3.3,3.2,3.6,2.5,3.2,2.4,3.2,3.0,3.2,3.0,2.8,2.6,2.4],"m_neg":[2,2,2,2,1,8,6,9,5,7,3,7,6,7,12],"themes":{"Durability / Build Quality":18,"Confusing Manual / Setup Difficulty":14,"Customer Service & Refund Issues":12,"Sizing & Dimension Inaccuracy":10,"Shipping / Packaging Damage":9,"Defective / Hardware Failure":8,"Overpriced / Poor Value":8}},"KITCH-006":{"name":"ThermoPrecision Instant Read Meat Thermometer","cat":"Kitchen","tier":"Healthy","score":8.1,"rec_r":3.91,"tot_r":4.03,"rec_neg":0.12,"top_comp":"Sizing & Dimension Inaccuracy","n_tot":170,"n_rec":43,"m_r":[4.5,4.8,3.8,4.0,3.8,3.8,3.6,3.8,4.3,4.2,4.1,4.4,3.9,3.8,4.1],"m_neg":[0,0,1,3,2,3,1,2,1,0,0,1,2,2,1],"themes":{"Shipping / Packaging Damage":6,"Overpriced / Poor Value":3,"Confusing Manual / Setup Difficulty":3,"Sizing & Dimension Inaccuracy":3,"Durability / Build Quality":2,"Customer Service & Refund Issues":1,"Defective / Hardware Failure":1}},"KITCH-003":{"name":"TitaniumBlade 15-Piece German Knife Set","cat":"Kitchen","tier":"High","score":45.1,"rec_r":2.0,"tot_r":2.62,"rec_neg":0.75,"top_comp":"Durability / Build Quality","n_tot":184,"n_rec":59,"m_r":[5.0,4.2,3.7,3.6,3.1,3.2,3.0,2.9,2.7,2.6,2.5,1.2,1.7,2.5,1.6],"m_neg":[0,0,2,1,4,7,7,6,5,4,8,11,16,13,15],"themes":{"Customer Service & Refund Issues":20,"Durability / Build Quality":18,"Shipping / Packaging Damage":16,"Overpriced / Poor Value":15,"Confusing Manual / Setup Difficulty":14,"Defective / Hardware Failure":9,"Sizing & Dimension Inaccuracy":7}},"HOME-001":{"name":"ErgoRest Ergonomic Mesh Executive Office Chair","cat":"Home & Office","tier":"High","score":42.6,"rec_r":2.05,"tot_r":2.58,"rec_neg":0.72,"top_comp":"Shipping / Packaging Damage","n_tot":194,"n_rec":58,"m_r":[3.0,3.0,3.8,3.2,3.9,1.7,3.1,2.7,2.6,1.9,2.4,2.4,2.8,1.2,1.7],"m_neg":[1,2,1,3,3,2,5,10,7,12,13,5,12,10,20],"themes":{"Shipping / Packaging Damage":23,"Defective / Hardware Failure":20,"Durability / Build Quality":17,"Overpriced / Poor Value":12,"Confusing Manual / Setup Difficulty":12,"Sizing & Dimension Inaccuracy":11,"Customer Service & Refund Issues":11}},"BABY-002":{"name":"SiliconeSuction Toddler Feeding Plate & Bib Set","cat":"Baby & Kids","tier":"Healthy","score":7.3,"rec_r":4.44,"tot_r":4.42,"rec_neg":0.1,"top_comp":"Customer Service & Refund Issues","n_tot":184,"n_rec":39,"m_r":[4.5,3.8,4.3,4.4,4.5,4.4,4.5,4.5,4.5,4.7,4.8,3.8,4.5,4.4,4.5],"m_neg":[0,1,2,0,2,1,1,0,0,0,0,3,1,2,1],"themes":{"Customer Service & Refund Issues":4,"Defective / Hardware Failure":3,"Durability / Build Quality":2,"Shipping / Packaging Damage":2,"Sizing & Dimension Inaccuracy":2,"Overpriced / Poor Value":1}},"HLTH-001":{"name":"SonicClean Pro Electric Sonic Toothbrush","cat":"Health & Personal Care","tier":"Healthy","score":2.7,"rec_r":4.3,"tot_r":4.35,"rec_neg":0.04,"top_comp":"Durability / Build Quality","n_tot":201,"n_rec":47,"m_r":[4.6,4.3,4.5,4.1,4.3,4.5,4.5,4.2,4.4,4.2,4.7,4.4,4.1,4.3,4.5],"m_neg":[0,0,1,1,1,0,0,1,1,3,0,1,1,0,1],"themes":{"Durability / Build Quality":3,"Sizing & Dimension Inaccuracy":2,"Defective / Hardware Failure":2,"Overpriced / Poor Value":2,"Shipping / Packaging Damage":1,"Confusing Manual / Setup Difficulty":1}},"HOME-006":{"name":"CableHide Heavy Duty Cable Management Raceway","cat":"Home & Office","tier":"High","score":50.2,"rec_r":1.55,"tot_r":1.68,"rec_neg":0.82,"top_comp":"Shipping / Packaging Damage","n_tot":163,"n_rec":55,"m_r":[1.5,1.3,1.6,1.5,1.5,2.1,1.2,1.6,1.9,1.9,1.7,2.3,1.6,1.3,1.7],"m_neg":[2,2,4,3,10,7,11,9,8,10,10,6,11,14,20],"themes":{"Durability / Build Quality":26,"Confusing Manual / Setup Difficulty":22,"Defective / Hardware Failure":20,"Shipping / Packaging Damage":19,"Sizing & Dimension Inaccuracy":16,"Customer Service & Refund Issues":14,"Overpriced / Poor Value":10}},"PETS-005":{"name":"NoPull Reflective Heavy Duty Dog Harness","cat":"Pet Supplies","tier":"Healthy","score":7.7,"rec_r":3.98,"tot_r":3.87,"rec_neg":0.12,"top_comp":"Customer Service & Refund Issues","n_tot":158,"n_rec":41,"m_r":[4.3,4.0,3.4,3.2,3.9,3.2,3.2,3.7,4.4,3.6,4.6,4.0,3.9,3.7,4.1],"m_neg":[0,0,1,1,3,4,1,2,1,4,0,1,1,2,2],"themes":{"Customer Service & Refund Issues":8,"Durability / Build Quality":5,"Shipping / Packaging Damage":3,"Defective / Hardware Failure":3,"Overpriced / Poor Value":2,"Sizing & Dimension Inaccuracy":1,"Confusing Manual / Setup Difficulty":1}},"HLTH-003":{"name":"AquaPulse Cordless Rechargeable Water Flosser","cat":"Health & Personal Care","tier":"Watch","score":31.8,"rec_r":2.79,"tot_r":2.87,"rec_neg":0.49,"top_comp":"Shipping / Packaging Damage","n_tot":213,"n_rec":67,"m_r":[3.4,3.3,3.8,3.6,2.4,2.5,2.7,3.2,2.1,2.8,2.9,3.0,2.9,3.1,2.5],"m_neg":[2,2,1,2,9,7,3,3,6,12,7,5,5,9,19],"themes":{"Shipping / Packaging Damage":21,"Durability / Build Quality":16,"Overpriced / Poor Value":16,"Sizing & Dimension Inaccuracy":10,"Confusing Manual / Setup Difficulty":10,"Customer Service & Refund Issues":10,"Defective / Hardware Failure":9}},"HLTH-002":{"name":"DeepTissue Portable Percussion Massage Gun","cat":"Health & Personal Care","tier":"High","score":54.3,"rec_r":1.62,"tot_r":2.66,"rec_neg":0.87,"top_comp":"Shipping / Packaging Damage","n_tot":178,"n_rec":45,"m_r":[3.5,4.2,4.0,4.0,3.3,2.7,2.8,2.9,3.5,2.6,2.3,2.4,1.7,1.7,1.5],"m_neg":[1,0,1,2,3,7,8,6,3,13,7,8,12,13,14],"themes":{"Shipping / Packaging Damage":22,"Durability / Build Quality":19,"Sizing & Dimension Inaccuracy":16,"Confusing Manual / Setup Difficulty":14,"Customer Service & Refund Issues":11,"Overpriced / Poor Value":10,"Defective / Hardware Failure":6}},"PETS-004":{"name":"GroomPro Self-Cleaning Pet Slicker Deshedding Brush","cat":"Pet Supplies","tier":"Healthy","score":5.9,"rec_r":3.89,"tot_r":3.89,"rec_neg":0.1,"top_comp":"Shipping / Packaging Damage","n_tot":162,"n_rec":38,"m_r":[2.7,4.3,3.4,3.7,4.2,4.0,3.9,3.7,4.1,4.3,3.5,4.0,4.3,3.6,3.8],"m_neg":[2,0,3,2,1,0,1,3,1,0,4,2,1,1,2],"themes":{"Confusing Manual / Setup Difficulty":6,"Sizing & Dimension Inaccuracy":5,"Shipping / Packaging Damage":5,"Durability / Build Quality":4,"Defective / Hardware Failure":2,"Overpriced / Poor Value":1}},"BABY-003":{"name":"SnuggleWarm Infant Muslin Swaddle Blankets 4-Pack","cat":"Baby & Kids","tier":"Healthy","score":4.2,"rec_r":4.21,"tot_r":4.26,"rec_neg":0.07,"top_comp":"Sizing & Dimension Inaccuracy","n_tot":192,"n_rec":53,"m_r":[4.5,4.8,4.5,4.2,4.4,4.1,4.4,4.1,4.5,4.5,3.9,4.1,4.2,4.3,4.1],"m_neg":[0,0,0,1,1,2,1,3,1,1,2,3,1,2,1],"themes":{"Defective / Hardware Failure":5,"Durability / Build Quality":4,"Customer Service & Refund Issues":3,"Sizing & Dimension Inaccuracy":3,"Shipping / Packaging Damage":2,"Confusing Manual / Setup Difficulty":1,"Overpriced / Poor Value":1}},"BABY-004":{"name":"WhiteNoise Dream Machine Sound Soother","cat":"Baby & Kids","tier":"Healthy","score":7.7,"rec_r":3.74,"tot_r":3.86,"rec_neg":0.14,"top_comp":"Shipping / Packaging Damage","n_tot":177,"n_rec":43,"m_r":[3.8,3.9,4.2,4.2,4.1,4.0,3.6,3.7,3.7,4.3,3.8,3.9,3.7,3.6,3.9],"m_neg":[0,1,0,2,0,1,2,3,2,0,4,2,2,2,2],"themes":{"Overpriced / Poor Value":9,"Durability / Build Quality":3,"Shipping / Packaging Damage":3,"Customer Service & Refund Issues":3,"Confusing Manual / Setup Difficulty":2,"Sizing & Dimension Inaccuracy":2,"Defective / Hardware Failure":1}},"HOME-004":{"name":"AromaMist Ultrasonic Essential Oil Diffuser","cat":"Home & Office","tier":"Watch","score":24.0,"rec_r":2.89,"tot_r":2.98,"rec_neg":0.44,"top_comp":"Confusing Manual / Setup Difficulty","n_tot":167,"n_rec":36,"m_r":[3.0,3.1,3.3,3.3,3.2,3.0,3.4,2.8,3.4,2.4,2.9,2.9,3.2,3.1,2.3],"m_neg":[1,3,2,5,6,3,2,7,4,11,5,7,6,3,7],"themes":{"Shipping / Packaging Damage":16,"Confusing Manual / Setup Difficulty":13,"Overpriced / Poor Value":11,"Sizing & Dimension Inaccuracy":10,"Durability / Build Quality":10,"Defective / Hardware Failure":7,"Customer Service & Refund Issues":5}},"PETS-001":{"name":"FreshFlow Stainless Steel Pet Water Fountain","cat":"Pet Supplies","tier":"High","score":49.1,"rec_r":1.81,"tot_r":2.64,"rec_neg":0.74,"top_comp":"Durability / Build Quality","n_tot":160,"n_rec":43,"m_r":[2.6,3.6,3.2,3.5,3.3,2.8,3.3,2.7,3.5,2.7,2.5,2.4,1.7,1.7,2.1],"m_neg":[3,1,2,3,2,6,4,8,3,6,6,8,8,15,9],"themes":{"Durability / Build Quality":27,"Confusing Manual / Setup Difficulty":13,"Sizing & Dimension Inaccuracy":12,"Overpriced / Poor Value":10,"Customer Service & Refund Issues":10,"Shipping / Packaging Damage":9,"Defective / Hardware Failure":3}},"HLTH-004":{"name":"BioGlow Organic Hyaluronic Acid Face Serum","cat":"Health & Personal Care","tier":"Healthy","score":3.0,"rec_r":4.15,"tot_r":4.03,"rec_neg":0.06,"top_comp":"Shipping / Packaging Damage","n_tot":173,"n_rec":52,"m_r":[4.0,3.8,4.0,4.5,4.1,3.5,3.4,4.3,3.8,4.6,4.1,3.8,4.1,4.3,4.0],"m_neg":[0,1,0,0,1,2,3,0,3,0,1,2,1,1,1],"themes":{"Defective / Hardware Failure":3,"Confusing Manual / Setup Difficulty":3,"Customer Service & Refund Issues":3,"Shipping / Packaging Damage":3,"Sizing & Dimension Inaccuracy":2,"Durability / Build Quality":2}},"PETS-002":{"name":"OrthopedicFoam Plush Waterproof Dog Bed Large","cat":"Pet Supplies","tier":"Healthy","score":4.8,"rec_r":4.44,"tot_r":4.36,"rec_neg":0.07,"top_comp":"Shipping / Packaging Damage","n_tot":216,"n_rec":59,"m_r":[3.0,4.0,3.8,4.2,4.0,4.9,4.7,4.6,4.3,4.2,4.6,4.3,4.7,4.7,3.9],"m_neg":[1,1,2,2,2,0,0,0,2,0,0,1,0,0,4],"themes":{"Confusing Manual / Setup Difficulty":4,"Overpriced / Poor Value":3,"Shipping / Packaging Damage":3,"Defective / Hardware Failure":3,"Customer Service & Refund Issues":1,"Durability / Build Quality":1}},"ELEC-001":{"name":"SoundPulse Pro Wireless ANC Headphones","cat":"Electronics","tier":"Healthy","score":0.8,"rec_r":4.58,"tot_r":4.35,"rec_neg":0.02,"top_comp":"Confusing Manual / Setup Difficulty","n_tot":204,"n_rec":59,"m_r":[4.4,4.2,4.7,4.5,4.3,4.5,3.9,4.2,4.3,4.7,3.8,4.2,4.7,4.5,4.6],"m_neg":[0,2,0,1,1,0,3,1,0,0,4,1,0,1,0],"themes":{"Durability / Build Quality":4,"Confusing Manual / Setup Difficulty":3,"Customer Service & Refund Issues":2,"Shipping / Packaging Damage":2,"Defective / Hardware Failure":2,"Sizing & Dimension Inaccuracy":1}},"ELEC-004":{"name":"StreamVision 4K Ultra HD Webcam","cat":"Electronics","tier":"Watch","score":19.8,"rec_r":2.78,"tot_r":2.94,"rec_neg":0.33,"top_comp":"Overpriced / Poor Value","n_tot":190,"n_rec":51,"m_r":[3.0,3.0,3.2,1.8,2.6,2.5,2.8,3.0,3.2,3.4,3.2,3.5,2.8,3.2,2.3],"m_neg":[1,4,3,4,6,10,4,5,2,3,4,5,5,3,9],"themes":{"Durability / Build Quality":16,"Shipping / Packaging Damage":12,"Overpriced / Poor Value":12,"Confusing Manual / Setup Difficulty":10,"Sizing & Dimension Inaccuracy":8,"Defective / Hardware Failure":6,"Customer Service & Refund Issues":4}},"HLTH-005":{"name":"PostureCorrect Adjustable Spine Support Brace","cat":"Health & Personal Care","tier":"High","score":53.6,"rec_r":1.51,"tot_r":1.75,"rec_neg":0.87,"top_comp":"Overpriced / Poor Value","n_tot":201,"n_rec":63,"m_r":[2.0,1.7,2.6,2.3,1.7,1.8,1.7,2.1,1.5,1.7,2.0,1.9,1.7,1.5,1.3],"m_neg":[2,11,4,3,6,9,12,10,14,9,10,15,14,23,18],"themes":{"Durability / Build Quality":41,"Sizing & Dimension Inaccuracy":26,"Overpriced / Poor Value":23,"Customer Service & Refund Issues":19,"Confusing Manual / Setup Difficulty":17,"Defective / Hardware Failure":17,"Shipping / Packaging Damage":17}},"BABY-006":{"name":"TeethRelief Organic Silicone Baby Teething Toys","cat":"Baby & Kids","tier":"Healthy","score":5.1,"rec_r":4.02,"tot_r":4.06,"rec_neg":0.09,"top_comp":"Customer Service & Refund Issues","n_tot":173,"n_rec":46,"m_r":[3.5,3.6,3.8,4.6,4.0,4.0,4.1,4.4,3.5,4.1,4.1,4.4,4.1,3.4,4.3],"m_neg":[1,1,1,0,1,1,2,0,3,2,3,0,1,2,1],"themes":{"Shipping / Packaging Damage":4,"Sizing & Dimension Inaccuracy":4,"Customer Service & Refund Issues":3,"Durability / Build Quality":3,"Overpriced / Poor Value":2,"Defective / Hardware Failure":2,"Confusing Manual / Setup Difficulty":1}},"ELEC-006":{"name":"PocketBass Portable Mini Bluetooth Speaker","cat":"Electronics","tier":"High","score":49.5,"rec_r":1.75,"tot_r":1.78,"rec_neg":0.81,"top_comp":"Durability / Build Quality","n_tot":227,"n_rec":59,"m_r":[2.0,1.2,1.9,1.4,2.0,1.8,2.4,1.4,1.9,1.6,1.7,1.7,1.9,1.8,1.5],"m_neg":[3,4,8,13,8,9,10,8,15,14,19,18,14,16,18],"themes":{"Durability / Build Quality":37,"Sizing & Dimension Inaccuracy":28,"Overpriced / Poor Value":24,"Defective / Hardware Failure":24,"Confusing Manual / Setup Difficulty":24,"Shipping / Packaging Damage":22,"Customer Service & Refund Issues":18}},"KITCH-004":{"name":"NutriBlend High-Speed Countertop Blender","cat":"Kitchen","tier":"Watch","score":33.5,"rec_r":2.62,"tot_r":2.84,"rec_neg":0.53,"top_comp":"Customer Service & Refund Issues","n_tot":186,"n_rec":53,"m_r":[3.8,2.4,1.6,3.4,3.1,2.8,3.5,3.2,2.5,2.7,3.2,2.7,2.1,3.4,2.4],"m_neg":[1,6,4,2,5,4,3,7,6,6,6,7,14,3,11],"themes":{"Durability / Build Quality":18,"Defective / Hardware Failure":14,"Customer Service & Refund Issues":12,"Sizing & Dimension Inaccuracy":11,"Shipping / Packaging Damage":10,"Confusing Manual / Setup Difficulty":10,"Overpriced / Poor Value":10}},"ELEC-003":{"name":"AuraGlow RGB Mechanical Gaming Keyboard","cat":"Electronics","tier":"High","score":53.1,"rec_r":1.62,"tot_r":2.62,"rec_neg":0.83,"top_comp":"Defective / Hardware Failure","n_tot":221,"n_rec":64,"m_r":[4.2,3.2,4.3,3.5,3.9,2.6,3.8,2.7,3.3,2.9,2.1,2.2,1.3,2.0,1.5],"m_neg":[1,3,1,3,3,9,3,6,4,4,14,18,18,17,18],"themes":{"Durability / Build Quality":28,"Defective / Hardware Failure":18,"Shipping / Packaging Damage":18,"Overpriced / Poor Value":15,"Customer Service & Refund Issues":15,"Sizing & Dimension Inaccuracy":15,"Confusing Manual / Setup Difficulty":13}},"HOME-003":{"name":"PureBreathe True HEPA Air Purifier for Home","cat":"Home & Office","tier":"Healthy","score":3.1,"rec_r":3.98,"tot_r":4.01,"rec_neg":0.06,"top_comp":"Shipping / Packaging Damage","n_tot":198,"n_rec":54,"m_r":[3.3,4.3,3.4,4.1,3.9,4.0,4.2,4.4,4.0,3.4,4.1,4.1,4.1,4.2,3.7],"m_neg":[1,0,2,3,3,1,1,1,1,2,2,2,0,1,2],"themes":{"Defective / Hardware Failure":5,"Shipping / Packaging Damage":5,"Confusing Manual / Setup Difficulty":4,"Sizing & Dimension Inaccuracy":3,"Durability / Build Quality":3,"Customer Service & Refund Issues":1,"Overpriced / Poor Value":1}},"HOME-005":{"name":"MemoryCloud Orthopedic Seat Cushion","cat":"Home & Office","tier":"Healthy","score":2.9,"rec_r":4.16,"tot_r":3.92,"rec_neg":0.06,"top_comp":"Sizing & Dimension Inaccuracy","n_tot":208,"n_rec":55,"m_r":[4.0,4.3,4.4,4.2,3.9,3.6,3.9,3.8,3.3,3.6,3.7,3.9,4.1,4.4,4.0],"m_neg":[0,0,0,0,1,3,1,3,4,6,3,3,2,0,1],"themes":{"Durability / Build Quality":7,"Shipping / Packaging Damage":5,"Sizing & Dimension Inaccuracy":5,"Customer Service & Refund Issues":4,"Defective / Hardware Failure":2,"Confusing Manual / Setup Difficulty":2,"Overpriced / Poor Value":2}},"HLTH-006":{"name":"SleepEase 3D Contoured Blackout Eye Mask","cat":"Health & Personal Care","tier":"Healthy","score":2.1,"rec_r":4.46,"tot_r":4.42,"rec_neg":0.04,"top_comp":"Shipping / Packaging Damage","n_tot":164,"n_rec":52,"m_r":[4.7,3.4,4.2,4.8,4.8,4.2,4.8,4.4,4.5,4.7,4.5,3.7,4.7,4.5,4.2],"m_neg":[0,2,0,0,0,1,0,1,0,0,0,3,0,1,1],"themes":{"Shipping / Packaging Damage":3,"Customer Service & Refund Issues":3,"Overpriced / Poor Value":1,"Confusing Manual / Setup Difficulty":1,"Sizing & Dimension Inaccuracy":1}},"PETS-003":{"name":"AutoLaser Interactive Cat Toy Rotating Beam","cat":"Pet Supplies","tier":"Watch","score":24.9,"rec_r":2.86,"tot_r":2.92,"rec_neg":0.4,"top_comp":"Overpriced / Poor Value","n_tot":210,"n_rec":57,"m_r":[3.2,2.0,2.6,2.0,3.4,2.7,2.7,2.7,2.9,3.3,2.5,3.7,2.6,3.7,2.6],"m_neg":[1,4,5,3,2,8,9,7,6,5,7,6,13,2,8],"themes":{"Durability / Build Quality":22,"Shipping / Packaging Damage":15,"Overpriced / Poor Value":13,"Customer Service & Refund Issues":13,"Defective / Hardware Failure":10,"Sizing & Dimension Inaccuracy":10,"Confusing Manual / Setup Difficulty":3}},"BABY-001":{"name":"SafeSleep Video Baby Monitor with Night Vision","cat":"Baby & Kids","tier":"High","score":47.7,"rec_r":1.75,"tot_r":2.68,"rec_neg":0.8,"top_comp":"Sizing & Dimension Inaccuracy","n_tot":176,"n_rec":44,"m_r":[3.5,3.8,3.8,4.0,4.0,3.3,3.2,3.1,2.9,2.6,2.5,1.9,1.2,2.2,1.8],"m_neg":[0,1,1,0,1,4,4,4,5,10,6,17,11,8,16],"themes":{"Sizing & Dimension Inaccuracy":17,"Durability / Build Quality":17,"Confusing Manual / Setup Difficulty":17,"Shipping / Packaging Damage":15,"Overpriced / Poor Value":11,"Customer Service & Refund Issues":6,"Defective / Hardware Failure":5}},"ELEC-005":{"name":"UltraFit GPS Heart Rate Smartwatch","cat":"Electronics","tier":"High","score":57.8,"rec_r":1.65,"tot_r":2.68,"rec_neg":0.88,"top_comp":"Shipping / Packaging Damage","n_tot":204,"n_rec":57,"m_r":[4.0,3.3,3.9,3.7,3.7,2.6,3.8,2.7,2.7,2.6,2.6,2.3,1.5,2.2,1.5],"m_neg":[0,4,2,3,2,4,3,10,6,7,12,8,22,8,20],"themes":{"Durability / Build Quality":29,"Overpriced / Poor Value":18,"Shipping / Packaging Damage":17,"Confusing Manual / Setup Difficulty":13,"Sizing & Dimension Inaccuracy":12,"Defective / Hardware Failure":11,"Customer Service & Refund Issues":11}},"HOME-002":{"name":"LuminaGlow Smart LED Dimmable Desk Lamp","cat":"Home & Office","tier":"Healthy","score":5.7,"rec_r":4.32,"tot_r":4.38,"rec_neg":0.1,"top_comp":"Customer Service & Refund Issues","n_tot":173,"n_rec":41,"m_r":[4.5,3.5,4.5,5.0,4.4,4.2,4.7,4.5,4.5,4.0,4.2,4.4,4.1,4.7,4.2],"m_neg":[0,1,0,0,0,2,0,1,1,2,1,1,2,0,2],"themes":{"Overpriced / Poor Value":3,"Customer Service & Refund Issues":3,"Defective / Hardware Failure":2,"Sizing & Dimension Inaccuracy":2,"Durability / Build Quality":2,"Shipping / Packaging Damage":1}},"ELEC-002":{"name":"HyperCharge 65W GaN Fast Wall Charger","cat":"Electronics","tier":"Healthy","score":1.7,"rec_r":4.33,"tot_r":4.14,"rec_neg":0.02,"top_comp":"Durability / Build Quality","n_tot":191,"n_rec":42,"m_r":[4.5,3.9,4.1,4.2,3.8,4.5,4.3,4.1,4.3,4.0,3.8,3.8,4.2,4.2,4.5],"m_neg":[0,1,1,2,2,0,0,2,2,1,3,1,0,1,0],"themes":{"Durability / Build Quality":9,"Overpriced / Poor Value":2,"Confusing Manual / Setup Difficulty":2,"Shipping / Packaging Damage":2,"Sizing & Dimension Inaccuracy":1}},"KITCH-005":{"name":"NonStick Diamond Ceramic Frying Pan 12-inch","cat":"Kitchen","tier":"High","score":50.1,"rec_r":1.9,"tot_r":2.56,"rec_neg":0.8,"top_comp":"Durability / Build Quality","n_tot":225,"n_rec":51,"m_r":[2.0,4.2,3.2,3.8,3.8,1.8,2.5,2.6,2.7,2.3,2.6,2.1,1.9,2.2,1.5],"m_neg":[1,0,5,3,2,8,8,10,9,7,12,22,12,15,14],"themes":{"Durability / Build Quality":31,"Shipping / Packaging Damage":25,"Defective / Hardware Failure":19,"Overpriced / Poor Value":15,"Sizing & Dimension Inaccuracy":13,"Confusing Manual / Setup Difficulty":13,"Customer Service & Refund Issues":12}}}};
+// Initialize Dashboard
+document.addEventListener("DOMContentLoaded", () =>{
+initKPIs();
+initOverviewCharts();
+initThemeCharts();
+initWatchlistTable();
+initProductDropdown();
+});
+function switchTab(tabId){
+document.querySelectorAll(".tab-pane").forEach(el => el.classList.remove("active"));
+document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+document.getElementById("tab-" + tabId).classList.add("active");
+event.currentTarget.classList.add("active");
+}
+function initKPIs(){
+const k = DATA.kpis;
+document.getElementById("kpi-total-reviews").innerText = k.total_reviews.toLocaleString();
+document.getElementById("kpi-pos-pct").innerText = k.pos_pct + "%";
+document.getElementById("kpi-neg-pct").innerText = k.neg_pct + "%";
+document.getElementById("kpi-avg-rating").innerText = k.avg_rating + " ★";
+document.getElementById("kpi-critical-high").innerText = (k.critical_count + k.high_count);
+document.getElementById("kpi-watch").innerText = k.watch_count;
+}
+let trendChart, catChart, compChart, praiseChart, prodTrendChart, prodThemesChart;
+function initOverviewCharts(){
+// 1. Sentiment Trend Line Chart
+const ctxTrend = document.getElementById("chart-sentiment-trend").getContext("2d");
+trendChart = new Chart(ctxTrend,{
+type:"line",
+data:{
+labels:DATA.timeline.months,
+datasets:[
+{
+label:"Positive %",
+data:DATA.timeline.pos,
+borderColor:"#3ECF9E",
+backgroundColor:"rgba(62, 207, 158, 0.1)",
+fill:true,
+tension:0.3
+},
+{
+label:"Negative %",
+data:DATA.timeline.neg,
+borderColor:"#E5484D",
+backgroundColor:"rgba(229, 72, 77, 0.1)",
+fill:true,
+tension:0.3
+},
+{
+label:"Neutral %",
+data:DATA.timeline.neu,
+borderColor:"#8B949E",
+borderDash:[4, 4],
+tension:0.3
+}
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{ labels:{ color:"#F0F6FC"}}
+},
+scales:{
+x:{ ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.5)"}},
+y:{ ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.5)"}, max:100}
+}
+}
+});
+// 2. Category Sentiment Stacked Bar
+const ctxCat = document.getElementById("chart-category-sentiment").getContext("2d");
+catChart = new Chart(ctxCat,{
+type:"bar",
+data:{
+labels:DATA.categories.names,
+datasets:[
+{ label:"Positive", data:DATA.categories.pos, backgroundColor:"#3ECF9E"},
+{ label:"Negative", data:DATA.categories.neg, backgroundColor:"#E5484D"},
+{ label:"Neutral", data:DATA.categories.neu, backgroundColor:"#8B949E"}
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{ labels:{ color:"#F0F6FC"}}
+},
+scales:{
+x:{ stacked:true, ticks:{ color:"#8B949E", maxRotation:20}, grid:{ display:false}},
+y:{ stacked:true, ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.5)"}}
+}
+}
+});
+}
+function initThemeCharts(){
+// Complaints Chart
+const compLabels = Object.keys(DATA.themes.comp);
+const compCounts = Object.values(DATA.themes.comp);
+const ctxComp = document.getElementById("chart-complaint-themes").getContext("2d");
+compChart = new Chart(ctxComp,{
+type:"bar",
+data:{
+labels:compLabels,
+datasets:[{ label:"Complaints Count", data:compCounts, backgroundColor:"#E5484D", borderRadius:4}]
+},
+options:{
+indexAxis:"y",
+responsive:true,
+maintainAspectRatio:false,
+plugins:{ legend:{ display:false}},
+scales:{
+x:{ ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.5)"}},
+y:{ ticks:{ color:"#F0F6FC", font:{ size:11}}, grid:{ display:false}}
+}
+}
+});
+// Praise Chart
+const praiseLabels = Object.keys(DATA.themes.praise);
+const praiseCounts = Object.values(DATA.themes.praise);
+const ctxPraise = document.getElementById("chart-praise-themes").getContext("2d");
+praiseChart = new Chart(ctxPraise,{
+type:"bar",
+data:{
+labels:praiseLabels,
+datasets:[{ label:"Praise Count", data:praiseCounts, backgroundColor:"#3ECF9E", borderRadius:4}]
+},
+options:{
+indexAxis:"y",
+responsive:true,
+maintainAspectRatio:false,
+plugins:{ legend:{ display:false}},
+scales:{
+x:{ ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.5)"}},
+y:{ ticks:{ color:"#F0F6FC", font:{ size:11}}, grid:{ display:false}}
+}
+}
+});
+}
+function initWatchlistTable(){
+const tbody = document.getElementById("watchlist-tbody");
+tbody.innerHTML = "";
+DATA.watchlist.forEach(row =>{
+const tr = document.createElement("tr");
+let pillClass = "pill-healthy";
+if (row.tier === "Critical") pillClass = "pill-critical";
+else if (row.tier === "High") pillClass = "pill-high";
+else if (row.tier === "Watch") pillClass = "pill-watch";
+else if (row.tier === "Insufficient Data") pillClass = "pill-insufficient";
+tr.innerHTML = `
+<td><strong>${row.name}</strong> <span style="font-size:11px;color:#8B949E;">(${row.id})</span></td>
+<td>${row.cat}</td>
+<td><strong>${row.score}</strong></td>
+<td><span class="pill ${pillClass}">${row.tier}</span></td>
+<td>${row.tot_r.toFixed(2)} ★</td>
+<td><strong style="color:${row.rec_r < 2.5 ? '#FF6B6B' :'#3ECF9E'}">${row.rec_r.toFixed(2)} ★</strong></td>
+<td>${(row.rec_neg * 100).toFixed(1)}%</td>
+<td style="color:#C9D1D9;">${row.top_comp}</td>
+`;
+tbody.appendChild(tr);
+});
+}
+function initProductDropdown(){
+const select = document.getElementById("product-select");
+select.innerHTML = "";
+Object.keys(DATA.drilldown).forEach(pid =>{
+const prod = DATA.drilldown[pid];
+const opt = document.createElement("option");
+opt.value = pid;
+opt.innerText = `[${prod.tier || 'N/A'}] ${prod.name} (${prod.cat})`;
+select.appendChild(opt);
+});
+renderProductDrilldown();
+}
+function renderProductDrilldown(){
+const select = document.getElementById("product-select");
+const pid = select.value;
+const prod = DATA.drilldown[pid];
+if (!prod) return;
+document.getElementById("pdrill-tier").innerText = prod.tier || "N/A";
+document.getElementById("pdrill-tier").className = "kpi-value " + (
+prod.tier === "Critical" ? "text-red" :
+prod.tier === "High" ? "text-amber" :
+prod.tier === "Watch" ? "text-yellow" :"text-teal"
+);
+document.getElementById("pdrill-score").innerText = "Composite Score:" + prod.score;
+document.getElementById("pdrill-recent-rating").innerText = prod.rec_r + " ★";
+document.getElementById("pdrill-lifetime-rating").innerText = "Lifetime:" + prod.tot_r + " ★";
+document.getElementById("pdrill-recent-neg").innerText = ((prod.rec_neg || 0) * 100).toFixed(1) + "%";
+document.getElementById("pdrill-reviews-count").innerText = "Recent:" + prod.n_rec + " / Total:" + prod.n_tot;
+document.getElementById("pdrill-top-complaint").innerText = prod.top_comp || "None";
+// Product Trend Chart (Dual Axis)
+if (prodTrendChart) prodTrendChart.destroy();
+const ctxPT = document.getElementById("chart-product-trend").getContext("2d");
+prodTrendChart = new Chart(ctxPT,{
+type:"line",
+data:{
+labels:DATA.timeline.months,
+datasets:[
+{
+label:"Average Star Rating",
+data:prod.m_r,
+borderColor:"#58A6FF",
+backgroundColor:"#58A6FF",
+yAxisID:"yRating",
+tension:0.3
+},
+{
+label:"Negative Reviews Count",
+data:prod.m_neg,
+borderColor:"#E5484D",
+backgroundColor:"rgba(229, 72, 77, 0.2)",
+fill:true,
+yAxisID:"yCount",
+type:"bar"
+}
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{ legend:{ labels:{ color:"#F0F6FC"}}},
+scales:{
+x:{ ticks:{ color:"#8B949E"}, grid:{ color:"rgba(48, 54, 61, 0.4)"}},
+yRating:{
+type:"linear",
+position:"left",
+min:1,
+max:5,
+ticks:{ color:"#58A6FF"},
+grid:{ color:"rgba(48, 54, 61, 0.4)"}
+},
+yCount:{
+type:"linear",
+position:"right",
+ticks:{ color:"#E5484D"},
+grid:{ display:false}
+}
+}
+}
+});
+// Product Complaint Themes Chart
+if (prodThemesChart) prodThemesChart.destroy();
+const themeLabels = Object.keys(prod.themes);
+const themeCounts = Object.values(prod.themes);
+const ctxPTH = document.getElementById("chart-product-themes").getContext("2d");
+prodThemesChart = new Chart(ctxPTH,{
+type:"doughnut",
+data:{
+labels:themeLabels.length ? themeLabels :["No Complaints"],
+datasets:[{
+data:themeCounts.length ? themeCounts :[1],
+backgroundColor:themeCounts.length ? ["#E5484D", "#F0913A", "#F0C531", "#58A6FF", "#BC8CFF", "#A371F7", "#7EE787"] :["#3ECF9E"]
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{ position:"right", labels:{ color:"#F0F6FC", font:{ size:11}}}
+}
+}
+});
+}
+function sortTable(colIndex){
+const table = document.getElementById("watchlist-table");
+let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+switching = true;
+dir = "asc";
+while (switching){
+switching = false;
+rows = table.rows;
+for (i = 1;i < (rows.length - 1);i++){
+shouldSwitch = false;
+x = rows[i].getElementsByTagName("TD")[colIndex];
+y = rows[i + 1].getElementsByTagName("TD")[colIndex];
+let valX = isNaN(parseFloat(x.innerText)) ? x.innerText.toLowerCase() :parseFloat(x.innerText);
+let valY = isNaN(parseFloat(y.innerText)) ? y.innerText.toLowerCase() :parseFloat(y.innerText);
+if (dir == "asc"){
+if (valX > valY){ shouldSwitch = true;break;}
+} else if (dir == "desc"){
+if (valX < valY){ shouldSwitch = true;break;}
+}
+}
+if (shouldSwitch){
+rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+switching = true;
+switchcount++;
+} else{
+if (switchcount == 0 && dir == "asc"){
+dir = "desc";
+switching = true;
+}
+}
+}
+}
+</script>
+</body>
+</html>

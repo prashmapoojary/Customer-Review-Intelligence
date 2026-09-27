@@ -1,0 +1,36 @@
+product_id,product_name,category,overall_avg_rating,recent_avg_rating,n_reviews_total,n_reviews_recent,n_reviews_prior,recent_negative_rate,prior_negative_rate,trend_score,severity_score,volume_confidence,risk_score,risk_tier,top_complaint_theme
+ELEC-005,UltraFit GPS Heart Rate Smartwatch,Electronics,2.68,1.65,204,57,48,0.877,0.562,59.6,55.6,1.0,57.8,High,Shipping / Packaging Damage
+HLTH-002,DeepTissue Portable Percussion Massage Gun,Health & Personal Care,2.66,1.62,178,45,43,0.867,0.628,55.3,53.0,1.0,54.3,High,Shipping / Packaging Damage
+HLTH-005,PostureCorrect Adjustable Spine Support Brace,Health & Personal Care,1.75,1.51,201,63,49,0.873,0.694,52.6,54.8,1.0,53.6,High,Overpriced / Poor Value
+ELEC-003,AuraGlow RGB Mechanical Gaming Keyboard,Electronics,2.62,1.62,221,64,54,0.828,0.667,49.5,57.6,1.0,53.1,High,Defective / Hardware Failure
+HOME-006,CableHide Heavy Duty Cable Management Raceway,Home & Office,1.68,1.55,163,55,35,0.818,0.714,46.1,55.2,1.0,50.2,High,Shipping / Packaging Damage
+KITCH-005,NonStick Diamond Ceramic Frying Pan 12-inch,Kitchen,2.56,1.9,225,51,59,0.804,0.695,45.6,55.6,1.0,50.1,High,Durability / Build Quality
+ELEC-006,PocketBass Portable Mini Bluetooth Speaker,Electronics,1.78,1.75,227,59,63,0.814,0.794,41.7,59.0,1.0,49.5,High,Durability / Build Quality
+PETS-001,FreshFlow Stainless Steel Pet Water Fountain,Pet Supplies,2.64,1.81,160,43,35,0.744,0.571,45.8,53.2,1.0,49.1,High,Durability / Build Quality
+BABY-001,SafeSleep Video Baby Monitor with Night Vision,Baby & Kids,2.68,1.75,176,44,51,0.795,0.627,48.2,47.2,1.0,47.7,High,Sizing & Dimension Inaccuracy
+KITCH-003,TitaniumBlade 15-Piece German Knife Set,Kitchen,2.62,2.0,184,59,33,0.746,0.697,39.7,51.6,1.0,45.1,High,Durability / Build Quality
+HOME-001,ErgoRest Ergonomic Mesh Executive Office Chair,Home & Office,2.58,2.05,194,58,46,0.724,0.652,39.8,46.0,1.0,42.6,High,Shipping / Packaging Damage
+BABY-005,StrollEasy Lightweight Compact Travel Stroller,Baby & Kids,2.92,2.57,209,49,52,0.51,0.327,34.7,34.5,1.0,34.6,Watch,Durability / Build Quality
+KITCH-004,NutriBlend High-Speed Countertop Blender,Kitchen,2.84,2.62,186,53,45,0.528,0.422,31.7,35.6,1.0,33.5,Watch,Customer Service & Refund Issues
+HLTH-003,AquaPulse Cordless Rechargeable Water Flosser,Health & Personal Care,2.87,2.79,213,67,60,0.493,0.367,30.9,32.8,1.0,31.8,Watch,Shipping / Packaging Damage
+PETS-003,AutoLaser Interactive Cat Toy Rotating Beam,Pet Supplies,2.92,2.86,210,57,52,0.404,0.346,23.0,27.3,1.0,24.9,Watch,Overpriced / Poor Value
+HOME-004,AromaMist Ultrasonic Essential Oil Diffuser,Home & Office,2.98,2.89,167,36,45,0.444,0.511,22.2,26.2,1.0,24.0,Watch,Confusing Manual / Setup Difficulty
+ELEC-004,StreamVision 4K Ultra HD Webcam,Electronics,2.94,2.78,190,51,49,0.333,0.245,21.1,18.2,1.0,19.8,Watch,Overpriced / Poor Value
+KITCH-002,BaristaTouch Automatic Espresso Machine,Kitchen,3.91,3.94,215,54,57,0.185,0.158,10.6,12.5,1.0,11.5,Healthy,Shipping / Packaging Damage
+KITCH-006,ThermoPrecision Instant Read Meat Thermometer,Kitchen,4.03,3.91,170,43,41,0.116,0.024,10.4,5.3,1.0,8.1,Healthy,Sizing & Dimension Inaccuracy
+BABY-004,WhiteNoise Dream Machine Sound Soother,Baby & Kids,3.86,3.74,177,43,43,0.14,0.14,7.0,8.5,1.0,7.7,Healthy,Shipping / Packaging Damage
+PETS-005,NoPull Reflective Heavy Duty Dog Harness,Pet Supplies,3.87,3.98,158,41,41,0.122,0.122,6.1,9.8,1.0,7.7,Healthy,Customer Service & Refund Issues
+BABY-002,SiliconeSuction Toddler Feeding Plate & Bib Set,Baby & Kids,4.42,4.44,184,39,49,0.103,0.061,7.2,7.5,1.0,7.3,Healthy,Customer Service & Refund Issues
+PETS-004,GroomPro Self-Cleaning Pet Slicker Deshedding Brush,Pet Supplies,3.89,3.89,162,38,44,0.105,0.136,5.3,6.6,1.0,5.9,Healthy,Shipping / Packaging Damage
+HOME-002,LuminaGlow Smart LED Dimmable Desk Lamp,Home & Office,4.38,4.32,173,41,43,0.098,0.093,5.1,6.5,1.0,5.7,Healthy,Customer Service & Refund Issues
+BABY-006,TeethRelief Organic Silicone Baby Teething Toys,Baby & Kids,4.06,4.02,173,46,42,0.087,0.095,4.3,5.9,1.0,5.1,Healthy,Customer Service & Refund Issues
+PETS-002,OrthopedicFoam Plush Waterproof Dog Bed Large,Pet Supplies,4.36,4.44,216,59,49,0.068,0.02,5.8,3.7,1.0,4.8,Healthy,Shipping / Packaging Damage
+BABY-003,SnuggleWarm Infant Muslin Swaddle Blankets 4-Pack,Baby & Kids,4.26,4.21,192,53,46,0.075,0.13,3.8,4.7,1.0,4.2,Healthy,Sizing & Dimension Inaccuracy
+KITCH-001,ChefMaster 8-in-1 Digital Air Fryer XL,Kitchen,4.35,4.45,188,56,45,0.054,0.089,2.7,3.8,1.0,3.2,Healthy,Defective / Hardware Failure
+HOME-003,PureBreathe True HEPA Air Purifier for Home,Home & Office,4.01,3.98,198,54,46,0.056,0.13,2.8,3.5,1.0,3.1,Healthy,Shipping / Packaging Damage
+HLTH-004,BioGlow Organic Hyaluronic Acid Face Serum,Health & Personal Care,4.03,4.15,173,52,38,0.058,0.079,2.9,3.2,1.0,3.0,Healthy,Shipping / Packaging Damage
+HOME-005,MemoryCloud Orthopedic Seat Cushion,Home & Office,3.92,4.16,208,55,57,0.055,0.211,2.7,3.0,1.0,2.9,Healthy,Sizing & Dimension Inaccuracy
+HLTH-001,SonicClean Pro Electric Sonic Toothbrush,Health & Personal Care,4.35,4.3,201,47,57,0.043,0.053,2.1,3.4,1.0,2.7,Healthy,Durability / Build Quality
+HLTH-006,SleepEase 3D Contoured Blackout Eye Mask,Health & Personal Care,4.42,4.46,164,52,34,0.038,0.088,1.9,2.2,1.0,2.1,Healthy,Shipping / Packaging Damage
+ELEC-002,HyperCharge 65W GaN Fast Wall Charger,Electronics,4.14,4.33,191,42,42,0.024,0.119,1.2,2.4,1.0,1.7,Healthy,Durability / Build Quality
+ELEC-001,SoundPulse Pro Wireless ANC Headphones,Electronics,4.35,4.58,204,59,47,0.017,0.106,0.8,0.7,1.0,0.8,Healthy,Confusing Manual / Setup Difficulty

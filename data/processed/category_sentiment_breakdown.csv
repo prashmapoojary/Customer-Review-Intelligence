@@ -1,0 +1,18 @@
+category,sentiment_label,review_count
+Baby & Kids,negative,242
+Baby & Kids,neutral,3
+Baby & Kids,positive,866
+Electronics,negative,508
+Electronics,neutral,1
+Electronics,positive,728
+Health & Personal Care,negative,386
+Health & Personal Care,neutral,5
+Health & Personal Care,positive,739
+Home & Office,negative,367
+Home & Office,neutral,4
+Home & Office,positive,732
+Kitchen,negative,379
+Kitchen,positive,789
+Pet Supplies,negative,231
+Pet Supplies,neutral,4
+Pet Supplies,positive,671

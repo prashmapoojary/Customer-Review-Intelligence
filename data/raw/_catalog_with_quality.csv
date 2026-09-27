@@ -1,0 +1,36 @@
+product_id,product_name,category,quality_tier
+P1000,Wireless Bluetooth Earbuds,Electronics,good
+P1001,Portable Power Bank 20000mAh,Electronics,poor
+P1002,USB-C Fast Charger,Electronics,mixed
+P1003,Noise Cancelling Headphones,Electronics,good
+P1004,Smart Fitness Tracker,Electronics,excellent
+P1005,4K Streaming Media Player,Electronics,excellent
+P1006,Wireless Phone Charger Stand,Electronics,excellent
+P1007,Bluetooth Speaker Mini,Electronics,declining
+P1008,Stainless Steel Air Fryer,Kitchen,mixed
+P1009,Electric Kettle 1.7L,Kitchen,mixed
+P1010,Non-Stick Frying Pan Set,Kitchen,excellent
+P1011,Stand Mixer 5-Quart,Kitchen,poor
+P1012,Cold Brew Coffee Maker,Kitchen,declining
+P1013,Vacuum Sealer Food Storage,Kitchen,excellent
+P1014,Digital Kitchen Scale,Kitchen,excellent
+P1015,Ceramic Knife Set,Kitchen,excellent
+P1016,Ergonomic Office Chair,Home & Office,good
+P1017,Adjustable Standing Desk,Home & Office,good
+P1018,LED Desk Lamp with USB Port,Home & Office,good
+P1019,Memory Foam Seat Cushion,Home & Office,good
+P1020,Under-Desk Cable Management Tray,Home & Office,mixed
+P1021,Wireless Mouse and Keyboard Combo,Home & Office,excellent
+P1022,Convertible Baby Car Seat,Baby & Kids,good
+P1023,Silicone Baby Feeding Set,Baby & Kids,good
+P1024,Baby Monitor with Camera,Baby & Kids,good
+P1025,Toddler Balance Bike,Baby & Kids,declining
+P1026,Electric Toothbrush Set,Health & Personal Care,excellent
+P1027,Facial Cleansing Brush,Health & Personal Care,good
+P1028,Digital Body Weight Scale,Health & Personal Care,good
+P1029,Handheld Massage Gun,Health & Personal Care,excellent
+P1030,Blue Light Blocking Glasses,Health & Personal Care,mixed
+P1031,Automatic Pet Food Dispenser,Pet Supplies,excellent
+P1032,Orthopedic Dog Bed,Pet Supplies,excellent
+P1033,Cat Water Fountain,Pet Supplies,poor
+P1034,Retractable Dog Leash,Pet Supplies,poor

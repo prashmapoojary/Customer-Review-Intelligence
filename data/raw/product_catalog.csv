@@ -1,0 +1,36 @@
+product_id,product_name,category,base_price
+ELEC-001,SoundPulse Pro Wireless ANC Headphones,Electronics,149.99
+ELEC-002,HyperCharge 65W GaN Fast Wall Charger,Electronics,29.99
+ELEC-003,AuraGlow RGB Mechanical Gaming Keyboard,Electronics,89.99
+ELEC-004,StreamVision 4K Ultra HD Webcam,Electronics,59.99
+ELEC-005,UltraFit GPS Heart Rate Smartwatch,Electronics,119.99
+ELEC-006,PocketBass Portable Mini Bluetooth Speaker,Electronics,19.99
+KITCH-001,ChefMaster 8-in-1 Digital Air Fryer XL,Kitchen,99.99
+KITCH-002,BaristaTouch Automatic Espresso Machine,Kitchen,199.99
+KITCH-003,TitaniumBlade 15-Piece German Knife Set,Kitchen,79.99
+KITCH-004,NutriBlend High-Speed Countertop Blender,Kitchen,69.99
+KITCH-005,NonStick Diamond Ceramic Frying Pan 12-inch,Kitchen,39.99
+KITCH-006,ThermoPrecision Instant Read Meat Thermometer,Kitchen,18.99
+HOME-001,ErgoRest Ergonomic Mesh Executive Office Chair,Home & Office,189.99
+HOME-002,LuminaGlow Smart LED Dimmable Desk Lamp,Home & Office,34.99
+HOME-003,PureBreathe True HEPA Air Purifier for Home,Home & Office,89.99
+HOME-004,AromaMist Ultrasonic Essential Oil Diffuser,Home & Office,24.99
+HOME-005,MemoryCloud Orthopedic Seat Cushion,Home & Office,29.99
+HOME-006,CableHide Heavy Duty Cable Management Raceway,Home & Office,15.99
+BABY-001,SafeSleep Video Baby Monitor with Night Vision,Baby & Kids,129.99
+BABY-002,SiliconeSuction Toddler Feeding Plate & Bib Set,Baby & Kids,22.99
+BABY-003,SnuggleWarm Infant Muslin Swaddle Blankets 4-Pack,Baby & Kids,26.99
+BABY-004,WhiteNoise Dream Machine Sound Soother,Baby & Kids,29.99
+BABY-005,StrollEasy Lightweight Compact Travel Stroller,Baby & Kids,149.99
+BABY-006,TeethRelief Organic Silicone Baby Teething Toys,Baby & Kids,12.99
+HLTH-001,SonicClean Pro Electric Sonic Toothbrush,Health & Personal Care,49.99
+HLTH-002,DeepTissue Portable Percussion Massage Gun,Health & Personal Care,69.99
+HLTH-003,AquaPulse Cordless Rechargeable Water Flosser,Health & Personal Care,32.99
+HLTH-004,BioGlow Organic Hyaluronic Acid Face Serum,Health & Personal Care,19.99
+HLTH-005,PostureCorrect Adjustable Spine Support Brace,Health & Personal Care,21.99
+HLTH-006,SleepEase 3D Contoured Blackout Eye Mask,Health & Personal Care,14.99
+PETS-001,FreshFlow Stainless Steel Pet Water Fountain,Pet Supplies,39.99
+PETS-002,OrthopedicFoam Plush Waterproof Dog Bed Large,Pet Supplies,64.99
+PETS-003,AutoLaser Interactive Cat Toy Rotating Beam,Pet Supplies,22.99
+PETS-004,GroomPro Self-Cleaning Pet Slicker Deshedding Brush,Pet Supplies,16.99
+PETS-005,NoPull Reflective Heavy Duty Dog Harness,Pet Supplies,27.99
